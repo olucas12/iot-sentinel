@@ -8,7 +8,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class CasaInteligenteGUI extends JFrame {
 
     private List<Ambiente> listaDeAmbientes;
@@ -33,7 +32,6 @@ public class CasaInteligenteGUI extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
 
-    
         try {
             for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -42,15 +40,13 @@ public class CasaInteligenteGUI extends JFrame {
                 }
             }
         } catch (Exception e) {
-        
             System.err.println("Nimbus L&F not found, using default.");
         }
 
-    
         JPanel mainPanel = new JPanel(new GridLayout(1, 3, 10, 10));
         mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-    
+        // Painel de ambientes
         JPanel environmentManagementPanel = new JPanel(new BorderLayout(5, 5));
         environmentManagementPanel.setBorder(BorderFactory.createTitledBorder("Ambientes"));
         ambienteListModel = new DefaultListModel<>();
@@ -68,7 +64,7 @@ public class CasaInteligenteGUI extends JFrame {
         ambButtonsPanel.add(removeAmbienteButton);
         environmentManagementPanel.add(ambButtonsPanel, BorderLayout.SOUTH);
 
-    
+        // Painel de dispositivos
         JPanel deviceManagementPanel = new JPanel(new BorderLayout(5, 5));
         deviceManagementPanel.setBorder(BorderFactory.createTitledBorder("Dispositivos no Ambiente"));
         dispositivoListModel = new DefaultListModel<>();
@@ -86,11 +82,10 @@ public class CasaInteligenteGUI extends JFrame {
         dispButtonsPanel.add(removeDispositivoButton);
         deviceManagementPanel.add(dispButtonsPanel, BorderLayout.SOUTH);
 
-    
+        // Painel de controle
         controlPanel = new JPanel();
         controlPanel.setBorder(BorderFactory.createTitledBorder("Controles do Dispositivo"));
         controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
-
 
         mainPanel.add(environmentManagementPanel);
         mainPanel.add(deviceManagementPanel);
@@ -98,7 +93,6 @@ public class CasaInteligenteGUI extends JFrame {
 
         add(mainPanel, BorderLayout.CENTER);
 
-    
         statusLabel = new JLabel("Bem-vindo!");
         statusLabel.setBorder(new EmptyBorder(5, 10, 5, 10));
         add(statusLabel, BorderLayout.SOUTH);
@@ -117,7 +111,7 @@ public class CasaInteligenteGUI extends JFrame {
             ambienteListModel.addElement(amb);
         }
         if (ambienteSelecionado == null && !listaDeAmbientes.isEmpty()) {
-             ambienteJList.setSelectedIndex(0);
+            ambienteJList.setSelectedIndex(0);
         } else if (ambienteSelecionado != null && listaDeAmbientes.contains(ambienteSelecionado)) {
             ambienteJList.setSelectedValue(ambienteSelecionado, true);
         } else if (listaDeAmbientes.isEmpty()) {
@@ -127,35 +121,15 @@ public class CasaInteligenteGUI extends JFrame {
     }
 
     private void refreshDispositivoList() {
-    
-    
-
         dispositivoListModel.clear();
-
         if (ambienteSelecionado != null) {
-        
             for (Dispositivo disp : ambienteSelecionado.getDispositivos()) {
                 dispositivoListModel.addElement(disp);
             }
-
-        
-        
             if (dispositivoSelecionado != null && ambienteSelecionado.getDispositivos().contains(dispositivoSelecionado)) {
                 dispositivoJList.setSelectedValue(dispositivoSelecionado, true);
-            
-            
-            
             }
-        
-        
-        
         }
-    
-    
-
-    
-    
-    
         updateControlPanel();
     }
 
@@ -175,12 +149,10 @@ public class CasaInteligenteGUI extends JFrame {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.anchor = GridBagConstraints.WEST;
 
-
-    
         JLabel deviceInfoLabel = new JLabel("<html><b>Dispositivo:</b> " + dispositivoSelecionado.getNome() +
-                                           "<br><b>Tipo:</b> " + dispositivoSelecionado.getTipo().getDescricao() +
-                                           "<br><b>Estado:</b> " + dispositivoSelecionado.getEstado().getDescricao() + "</html>");
-        deviceInfoLabel.setBorder(new EmptyBorder(0,0,10,0));
+                "<br><b>Tipo:</b> " + dispositivoSelecionado.getTipo().getDescricao() +
+                "<br><b>Estado:</b> " + dispositivoSelecionado.getEstado().getDescricao() + "</html>");
+        deviceInfoLabel.setBorder(new EmptyBorder(0, 0, 10, 0));
         controlPanel.add(deviceInfoLabel, gbc);
 
         JPanel commonButtons = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -188,7 +160,7 @@ public class CasaInteligenteGUI extends JFrame {
         ligarButton.addActionListener(e -> {
             dispositivoSelecionado.ligar();
             refreshDispositivoList();
-            updateControlPanel();    
+            updateControlPanel();
             setStatus(dispositivoSelecionado.getTipo().getDescricao() + " - " + dispositivoSelecionado.getNome() + " tentou ligar.");
         });
         JButton desligarButton = new JButton("Desligar");
@@ -202,7 +174,6 @@ public class CasaInteligenteGUI extends JFrame {
         commonButtons.add(desligarButton);
         controlPanel.add(commonButtons, gbc);
 
-    
         if (dispositivoSelecionado instanceof Ar) {
             Ar ar = (Ar) dispositivoSelecionado;
             JLabel arStatusLabel = new JLabel("Modo: " + ar.getModo().getDescricao() + ", Temp: " + ar.getTemperatura() + "°C");
@@ -282,7 +253,9 @@ public class CasaInteligenteGUI extends JFrame {
             controlPanel.add(ventButtons, gbc);
         } else if (dispositivoSelecionado instanceof Temperatura) {
             Temperatura sensorTemp = (Temperatura) dispositivoSelecionado;
-             JLabel tempLabel = new JLabel(sensorTemp.getEstado() == Estado.LIGADO ? "Temperatura Atual: " + String.format("%.2f", sensorTemp.getTemperaturaAtual()) + "°C" : "Sensor desligado");
+            JLabel tempLabel = new JLabel(sensorTemp.getEstado() == Estado.LIGADO
+                    ? "Temperatura Atual: " + String.format("%.2f", sensorTemp.getTemperaturaAtual()) + "°C"
+                    : "Sensor desligado");
             controlPanel.add(tempLabel, gbc);
 
             JButton lerTempButton = new JButton("Ler Temperatura");
@@ -295,7 +268,9 @@ public class CasaInteligenteGUI extends JFrame {
             controlPanel.add(lerTempButton, gbc);
         } else if (dispositivoSelecionado instanceof Movimento) {
             Movimento sensorMov = (Movimento) dispositivoSelecionado;
-            JLabel movLabel = new JLabel(sensorMov.getEstado() == Estado.LIGADO ? (sensorMov.isMexendo() ? "Movimento Detectado" : "Sem Movimento") : "Sensor desligado");
+            JLabel movLabel = new JLabel(sensorMov.getEstado() == Estado.LIGADO
+                    ? (sensorMov.isMexendo() ? "Movimento Detectado" : "Sem Movimento")
+                    : "Sensor desligado");
             controlPanel.add(movLabel, gbc);
 
             JButton detectarMovButton = new JButton("Detectar Movimento");
@@ -307,24 +282,19 @@ public class CasaInteligenteGUI extends JFrame {
             });
             controlPanel.add(detectarMovButton, gbc);
         }
-    
 
-    
         gbc.weighty = 1.0;
         controlPanel.add(new JPanel(), gbc);
-
 
         controlPanel.revalidate();
         controlPanel.repaint();
     }
 
-
-
-
     private class AddAmbienteListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            String nomeAmbiente = JOptionPane.showInputDialog(CasaInteligenteGUI.this, "Digite o nome do novo ambiente:", "Adicionar Ambiente", JOptionPane.PLAIN_MESSAGE);
+            String nomeAmbiente = JOptionPane.showInputDialog(CasaInteligenteGUI.this,
+                    "Digite o nome do novo ambiente:", "Adicionar Ambiente", JOptionPane.PLAIN_MESSAGE);
             if (nomeAmbiente != null && !nomeAmbiente.trim().isEmpty()) {
                 Ambiente novoAmbiente = new Ambiente(nomeAmbiente.trim());
                 listaDeAmbientes.add(novoAmbiente);
@@ -332,7 +302,8 @@ public class CasaInteligenteGUI extends JFrame {
                 ambienteJList.setSelectedValue(novoAmbiente, true);
                 setStatus("Ambiente '" + novoAmbiente.getNome() + "' adicionado.");
             } else if (nomeAmbiente != null) {
-                JOptionPane.showMessageDialog(CasaInteligenteGUI.this, "O nome do ambiente não pode ser vazio.", "Erro", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(CasaInteligenteGUI.this,
+                        "O nome do ambiente não pode ser vazio.", "Erro", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -352,7 +323,8 @@ public class CasaInteligenteGUI extends JFrame {
                     setStatus("Ambiente '" + nomeRemovido + "' removido.");
                 }
             } else {
-                JOptionPane.showMessageDialog(CasaInteligenteGUI.this, "Nenhum ambiente selecionado para remover.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(CasaInteligenteGUI.this,
+                        "Nenhum ambiente selecionado para remover.", "Aviso", JOptionPane.WARNING_MESSAGE);
             }
         }
     }
@@ -374,11 +346,11 @@ public class CasaInteligenteGUI extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (ambienteSelecionado == null) {
-                JOptionPane.showMessageDialog(CasaInteligenteGUI.this, "Selecione um ambiente primeiro!", "Aviso", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(CasaInteligenteGUI.this,
+                        "Selecione um ambiente primeiro!", "Aviso", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
-        
             JTextField nomeField = new JTextField(20);
             JComboBox<Tipo> tipoComboBox = new JComboBox<>(Tipo.values());
             JComboBox<SistemaOperacional> soComboBox = new JComboBox<>(SistemaOperacional.values());
@@ -394,14 +366,15 @@ public class CasaInteligenteGUI extends JFrame {
             panel.add(new JLabel("Sistema Operacional:"));
             panel.add(soComboBox);
 
-
-            int result = JOptionPane.showConfirmDialog(CasaInteligenteGUI.this, panel, "Adicionar Dispositivo ao " + ambienteSelecionado.getNome(),
+            int result = JOptionPane.showConfirmDialog(CasaInteligenteGUI.this, panel,
+                    "Adicionar Dispositivo ao " + ambienteSelecionado.getNome(),
                     JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
             if (result == JOptionPane.OK_OPTION) {
                 String nomeDispositivo = nomeField.getText().trim();
                 if (nomeDispositivo.isEmpty()) {
-                    JOptionPane.showMessageDialog(CasaInteligenteGUI.this, "O nome do dispositivo não pode ser vazio.", "Erro", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(CasaInteligenteGUI.this,
+                            "O nome do dispositivo não pode ser vazio.", "Erro", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
@@ -429,7 +402,8 @@ public class CasaInteligenteGUI extends JFrame {
                         novoDispositivo = new Ventilador(nomeDispositivo);
                         break;
                     default:
-                        JOptionPane.showMessageDialog(CasaInteligenteGUI.this, "Tipo de dispositivo desconhecido.", "Erro", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(CasaInteligenteGUI.this,
+                                "Tipo de dispositivo desconhecido.", "Erro", JOptionPane.ERROR_MESSAGE);
                         return;
                 }
 
@@ -437,7 +411,8 @@ public class CasaInteligenteGUI extends JFrame {
                     ambienteSelecionado.adicionarDispositivo(novoDispositivo);
                     refreshDispositivoList();
                     dispositivoJList.setSelectedValue(novoDispositivo, true);
-                    setStatus(novoDispositivo.getTipo().getDescricao() + " '" + novoDispositivo.getNome() + "' adicionado ao " + ambienteSelecionado.getNome() + ".");
+                    setStatus(novoDispositivo.getTipo().getDescricao() + " '" + novoDispositivo.getNome() +
+                            "' adicionado ao " + ambienteSelecionado.getNome() + ".");
                 }
             }
         }
@@ -447,12 +422,14 @@ public class CasaInteligenteGUI extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (ambienteSelecionado == null || dispositivoSelecionado == null) {
-                JOptionPane.showMessageDialog(CasaInteligenteGUI.this, "Selecione um ambiente e um dispositivo para remover.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(CasaInteligenteGUI.this,
+                        "Selecione um ambiente e um dispositivo para remover.", "Aviso", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
             int response = JOptionPane.showConfirmDialog(CasaInteligenteGUI.this,
-                    "Tem certeza que deseja remover o dispositivo '" + dispositivoSelecionado.getNome() + "' do ambiente '" + ambienteSelecionado.getNome() + "'?",
+                    "Tem certeza que deseja remover o dispositivo '" + dispositivoSelecionado.getNome() +
+                            "' do ambiente '" + ambienteSelecionado.getNome() + "'?",
                     "Remover Dispositivo", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
             if (response == JOptionPane.YES_OPTION) {
@@ -477,9 +454,7 @@ public class CasaInteligenteGUI extends JFrame {
         }
     }
 
-
     public static void main(String[] args) {
-    
         SwingUtilities.invokeLater(() -> {
             CasaInteligenteGUI gui = new CasaInteligenteGUI();
             gui.setVisible(true);
